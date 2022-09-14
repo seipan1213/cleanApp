@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:rakuten_demo/firebase_options.dart';
 import 'package:rakuten_demo/pages/loginPage.dart';
+import 'package:rakuten_demo/services/apiService.dart';
 import 'fragments/profile.dart';
 import 'fragments/timeline.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -69,7 +70,10 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         body: pages[selectIndex],
         floatingActionButton: FloatingActionButton(
-          onPressed: _incrementCounter,
+          onPressed: () async {
+            User user = User(name: "fuga", uid: "FUGA");
+            apiService.addUser(user);
+          },
           tooltip: 'Increment',
           child: const Icon(Icons.add),
         ),
