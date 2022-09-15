@@ -19,11 +19,23 @@ class PostPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(title),
+        leading: IconButton(
+            icon: Icon(Icons.close),
+            onPressed: () {
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(
+                  fullscreenDialog: true,
+                  builder: (BuildContext context) => MyHomePage(
+                    title: "Home",
+                    user_id: user_id!,
+                  ),
+                ),
+              );
+            }),
+        automaticallyImplyLeading: false,
       ),
-      body: Center(
-        child: PostForm(
-          user_id: user_id,
-        ),
+      body: PostForm(
+        user_id: user_id,
       ),
     );
   }
@@ -44,9 +56,9 @@ class _PostFormState extends State<PostForm> {
     3: 'トイレ',
   };
   final List<Widget> intensity = <Widget>[
-    Text('ちょっと頑張った'),
-    Text('普通に頑張った'),
-    Text('すごく頑張った！'),
+    Center(child: Text('ちょっと\n頑張った')),
+    Center(child: Text('普通に\n頑張った')),
+    Center(child: Text('すごく\n頑張った！')),
   ];
 
   String? spot = "";
@@ -66,26 +78,39 @@ class _PostFormState extends State<PostForm> {
   }
 
   Widget DropdownButtonCleanSpot() {
-    return DropdownButton<String>(
-      value: spot,
-      icon: const Icon(Icons.arrow_downward),
-      elevation: 16,
-      style: const TextStyle(color: Colors.deepPurple),
-      underline: Container(
-        height: 2,
-        color: Colors.deepPurpleAccent,
+    return Padding(
+      padding: EdgeInsets.symmetric(
+          horizontal: MediaQuery.of(context).size.width * 0.01),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            "どこを掃除した？",
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+          DropdownButton<String>(
+            value: spot,
+            icon: const Icon(Icons.arrow_downward),
+            elevation: 16,
+            // style: const TextStyle(color: Colors.deepPurple),
+            underline: Container(
+              height: 2,
+              color: Colors.deepPurpleAccent,
+            ),
+            onChanged: (String? value) {
+              setState(() {
+                spot = value!;
+              });
+            },
+            items: list.map<DropdownMenuItem<String>>((String value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Text(value),
+              );
+            }).toList(),
+          ),
+        ],
       ),
-      onChanged: (String? value) {
-        setState(() {
-          spot = value!;
-        });
-      },
-      items: list.map<DropdownMenuItem<String>>((String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value),
-        );
-      }).toList(),
     );
   }
 
@@ -96,20 +121,15 @@ class _PostFormState extends State<PostForm> {
       onPressed: (int index) {
         setState(() {
           selectedIntensity = index;
-          // The button that is tapped is set to true, and the others to false.
           for (int i = 0; i < _selectedintensityList.length; i++) {
             _selectedintensityList[i] = i == index;
           }
         });
       },
       borderRadius: const BorderRadius.all(Radius.circular(8)),
-      selectedBorderColor: Colors.red[700],
-      selectedColor: Colors.white,
-      fillColor: Colors.red[200],
-      color: Colors.red[400],
-      constraints: const BoxConstraints(
-        minHeight: 40.0,
-        minWidth: 80.0,
+      constraints: BoxConstraints(
+        minHeight: 50.0,
+        minWidth: MediaQuery.of(context).size.width * 0.2,
       ),
       isSelected: _selectedintensityList,
       children: intensity,
@@ -117,72 +137,122 @@ class _PostFormState extends State<PostForm> {
   }
 
   Widget SwitchListTileShareFlag() {
-    return SwitchListTile(
-      title: const Text('isShare'),
-      value: _is_share,
-      onChanged: (bool value) {
-        setState(() {
-          _is_share = value;
-        });
-      },
-    );
+    return Padding(
+        padding: EdgeInsets.symmetric(
+            horizontal: MediaQuery.of(context).size.width * 0.01),
+        child: Row(
+          children: <Widget>[
+            Expanded(
+                child: Text(
+              '全世界に公開する？',
+              style: Theme.of(context).textTheme.titleMedium,
+            )),
+            Switch(
+              value: _is_share,
+              onChanged: (bool value) {
+                setState(() {
+                  _is_share = value;
+                });
+              },
+            ),
+          ],
+        ));
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        ToggleButtonsCleaningIntensity(),
-        DropdownButtonCleanSpot(),
-        TextField(onChanged: (String txt) {
-          comment = txt;
-        }),
-        SwitchListTileShareFlag(),
-        ElevatedButton(
-            onPressed: () async {
-              final user = await apiService.getUser(user_id!);
-              final post = Post(
-                uid: user_id,
-                user_id: user.user_id,
-                is_share: _is_share,
-                comment: comment,
-                spot: spot,
-                intensity: selectedIntensity,
-                created_at: DateTime.now(),
-              );
-              await apiService.addPost(post);
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(
-                  fullscreenDialog: true,
-                  builder: (BuildContext context) => MyHomePage(
-                    title: "Home",
-                    user_id: user_id!,
+    return Padding(
+      padding: EdgeInsets.symmetric(
+          horizontal: MediaQuery.of(context).size.width * 0.04),
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            SizedBox(
+              height: 30,
+            ),
+            ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  shape: const CircleBorder(
+                    side: BorderSide(
+                      color: Colors.black,
+                      width: 1,
+                      style: BorderStyle.solid,
+                    ),
                   ),
                 ),
-              );
+                onPressed: () async {
+                  final user = await apiService.getUser(user_id!);
+                  final post = Post(
+                    uid: user_id,
+                    user_id: user.user_id,
+                    is_share: _is_share,
+                    comment: comment,
+                    spot: spot,
+                    intensity: selectedIntensity,
+                    created_at: DateTime.now(),
+                  );
+                  await apiService.addPost(post);
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(
+                      fullscreenDialog: true,
+                      builder: (BuildContext context) => MyHomePage(
+                        title: "Home",
+                        user_id: user_id!,
+                      ),
+                    ),
+                  );
 
-              int id;
-              for (id = 1; id <= cleanSpotList.length; id++) {
-                if (spot == cleanSpotList[id]) {
-                  break;
-                }
-              }
-              List<CleaningSetting> cleaningSettings =
-                  await apiService.getCleaningSettings(user_id!);
+                  int id;
+                  for (id = 1; id <= cleanSpotList.length; id++) {
+                    if (spot == cleanSpotList[id]) {
+                      break;
+                    }
+                  }
+                  List<CleaningSetting> cleaningSettings =
+                      await apiService.getCleaningSettings(user_id!);
 
-              NotificationsUtils.cancelNotificationsSchedule(id);
-              NotificationsUtils.scheduleNotifications(
-                id,
-                DateTime.now().add(Duration(
-                    seconds: cleaningSettings[id - 1].remind_interval! + 5)),
-              );
-            },
-            child: const Text(
-              '投稿',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            )),
-      ],
+                  NotificationsUtils.cancelNotificationsSchedule(id);
+                  NotificationsUtils.scheduleNotifications(
+                    id,
+                    DateTime.now().add(Duration(
+                        seconds:
+                            cleaningSettings[id - 1].remind_interval! + 5)),
+                  );
+                },
+                child: SizedBox(
+                  height: MediaQuery.of(context).size.width * 0.7,
+                  width: MediaQuery.of(context).size.width * 0.7,
+                  child: Center(
+                    child: Text(
+                      '掃除した',
+                      style: Theme.of(context).textTheme.displayMedium,
+                    ),
+                  ),
+                )),
+            SizedBox(
+              height: 20,
+            ),
+            ToggleButtonsCleaningIntensity(),
+            SizedBox(
+              height: 30,
+            ),
+            DropdownButtonCleanSpot(),
+            SwitchListTileShareFlag(),
+            TextField(
+              onChanged: (String txt) {
+                comment = txt;
+              },
+              decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  hintText: "コメント(任意)"),
+              maxLength: 140,
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

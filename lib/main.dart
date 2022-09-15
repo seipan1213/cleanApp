@@ -49,10 +49,12 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Cleaning Reminder',
+      title: 'Home',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.lightGreen,
-      ),
+          //primarySwatch: Colors.lightGreen,
+          ),
+      darkTheme: ThemeData.dark(),
       home: LoginPage(),
     );
   }

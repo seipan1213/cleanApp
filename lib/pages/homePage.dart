@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart' as Auth;
 import 'package:flutter/material.dart';
 import 'package:rakuten_demo/firebase_options.dart';
 import 'package:rakuten_demo/fragments/postPage.dart';
@@ -50,6 +51,20 @@ class _MyHomePageState extends State<MyHomePage> {
         appBar: AppBar(
           title: Text(widget.title),
           automaticallyImplyLeading: false,
+          actions: [
+            IconButton(
+                onPressed: () async {
+                  Navigator.of(context).pop();
+                  await Auth.FirebaseAuth.instance.signOut();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('ログアウトしました。')),
+                  );
+                },
+                icon: Icon(
+                  Icons.logout,
+                  color: Colors.red,
+                ))
+          ],
         ),
         body: pages[selectIndex],
         floatingActionButton: FloatingActionButton(
@@ -74,7 +89,7 @@ class _MyHomePageState extends State<MyHomePage> {
               label: 'TimeLine',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.people_alt),
+              icon: Icon(Icons.man),
               label: 'Profile',
             ),
             BottomNavigationBarItem(
