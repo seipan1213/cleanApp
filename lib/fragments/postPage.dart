@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rakuten_demo/pages/homePage.dart';
 import 'package:rakuten_demo/services/apiService.dart';
 import 'package:rakuten_demo/services/notifications_utils.dart';
 
@@ -151,7 +152,15 @@ class _PostFormState extends State<PostForm> {
                 created_at: DateTime.now(),
               );
               await apiService.addPost(post);
-              Navigator.of(context).pop();
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(
+                  fullscreenDialog: true,
+                  builder: (BuildContext context) => MyHomePage(
+                    title: "Home",
+                    user_id: user_id!,
+                  ),
+                ),
+              );
 
               int id;
               for (id = 1; id <= cleanSpotList.length; id++) {

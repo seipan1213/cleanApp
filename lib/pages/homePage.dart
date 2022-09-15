@@ -54,7 +54,7 @@ class _MyHomePageState extends State<MyHomePage> {
         body: pages[selectIndex],
         floatingActionButton: FloatingActionButton(
           onPressed: () async {
-            await Navigator.of(context).push(
+            await Navigator.of(context).pushReplacement(
               MaterialPageRoute(
                 fullscreenDialog: true,
                 builder: (BuildContext context) => PostPage(
@@ -63,14 +63,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ),
             );
-            setState(() {
-              pages = [];
-              pages = [
-                PostInfo(),
-                UserInfo(user_id: user_id),
-                CleaningSettingForms(user_id: user_id)
-              ];
-            });
           },
           child: const Icon(Icons.add),
         ),
