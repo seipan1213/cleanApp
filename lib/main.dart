@@ -51,8 +51,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Cleaning Reminder',
       theme: ThemeData(
-        primarySwatch: Colors.lightGreen,
-      ),
+          //primarySwatch: Colors.lightGreen,
+          ),
+      darkTheme: ThemeData.dark(),
       home: LoginPage(),
     );
   }

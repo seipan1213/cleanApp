@@ -32,7 +32,7 @@ class _CleaningSettingFormsState extends State<CleaningSettingForms> {
 
   Widget DropdownButtonCleaningInterval(int id) {
     if (dropdownValue[id] == null) {
-      return const CircularProgressIndicator();
+      return Center(child: const CircularProgressIndicator());
     }
     return DropdownButton<String>(
       value: dropdownValue[id].toString(),
@@ -103,7 +103,7 @@ class _CleaningSettingFormsState extends State<CleaningSettingForms> {
                 cleaningSettings = settings;
               },
               child: const Text(
-                '投稿',
+                '更新',
                 style: TextStyle(fontWeight: FontWeight.bold),
               )),
           Divider(),
