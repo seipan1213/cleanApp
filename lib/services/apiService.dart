@@ -165,7 +165,7 @@ class ApiService {
   }
 
   /**
-   * 引数無 全て
+   * 引数無 isShare: trueのみ
    * 引数有 user_idでフィルター
    */
   Future<List<Post>> getPosts({String user_id = ""}) async {
@@ -179,7 +179,10 @@ class ApiService {
             toFirestore: (Post post, _) => post.toFirestore(),
           );
     } else {
-      ref = db.collection('posts').withConverter(
+      ref = db
+          .collection('posts')
+          .where('is_share', isEqualTo: true)
+          .withConverter(
             fromFirestore: Post.fromFirestore,
             toFirestore: (Post post, _) => post.toFirestore(),
           );
