@@ -106,7 +106,7 @@ class Post {
 }
 
 class ApiService {
-  void addCleaningSettings(List<CleaningSetting> settings) async {
+  Future<void> addCleaningSettings(List<CleaningSetting> settings) async {
     for (final setting in settings) {
       final docRef = db
           .collection("users/${setting.user_uid}/cleaningSettings")
@@ -120,7 +120,7 @@ class ApiService {
     }
   }
 
-  void addUser(User user) async {
+  Future<void> addUser(User user) async {
     final docRef = db
         .collection("users")
         .withConverter(
@@ -134,13 +134,13 @@ class ApiService {
   /**
    * 必ずCleaningSettingは3つ
    */
-  void addUserWithCleaningSettings(
+  Future<void> addUserWithCleaningSettings(
       User user, List<CleaningSetting> settings) async {
     addUser(user);
     addCleaningSettings(settings);
   }
 
-  void addPost(Post post) async {
+  Future<void> addPost(Post post) async {
     final docRef = db
         .collection("posts")
         .withConverter(
@@ -165,7 +165,7 @@ class ApiService {
   }
 
   /**
-   * 引数無 全て
+   * 引数無 isShare: trueのみ
    * 引数有 user_idでフィルター
    */
   Future<List<Post>> getPosts({String user_id = ""}) async {
@@ -179,7 +179,10 @@ class ApiService {
             toFirestore: (Post post, _) => post.toFirestore(),
           );
     } else {
-      ref = db.collection('posts').withConverter(
+      ref = db
+          .collection('posts')
+          .where('is_share', isEqualTo: true)
+          .withConverter(
             fromFirestore: Post.fromFirestore,
             toFirestore: (Post post, _) => post.toFirestore(),
           );

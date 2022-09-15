@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:rakuten_demo/services/apiService.dart';
 
 class PostPage extends StatelessWidget {
-  PostPage({super.key, required this.title});
+  PostPage({super.key, required this.title, required this.user_id});
 
   final String title;
+  final String user_id;
   int _counter = 0;
 
   final Map<String, String> _dropDownMenu = {};
 
-  String comment = '';
   String _selectedKey = '';
 
   @override
@@ -18,45 +19,47 @@ class PostPage extends StatelessWidget {
         title: Text(title),
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            ToggleButtonsCleaningIntensity(),
-            DropdownButtonCleanSpot(),
-            TextField(onChanged: (String txt) {
-              comment = txt;
-            }),
-            SwitchListTileShareFlag(),
-            ElevatedButton(
-                onPressed: () {},
-                child: const Text(
-                  '投稿',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                )),
-          ],
+        child: PostForm(
+          user_id: user_id,
         ),
       ),
     );
   }
 }
 
-class DropdownButtonCleanSpot extends StatefulWidget {
-  const DropdownButtonCleanSpot({super.key});
+class PostForm extends StatefulWidget {
+  const PostForm({super.key, required this.user_id});
+  final String user_id;
 
   @override
-  State<DropdownButtonCleanSpot> createState() =>
-      _DropdownButtonCleanSpotState();
+  State<PostForm> createState() => _PostFormState();
 }
 
-final List<String> cleanSpotList = <String>['風呂', 'リビング', 'トイレ'];
+class _PostFormState extends State<PostForm> {
+  final List<String> cleanSpotList = <String>['風呂', 'リビング', 'トイレ'];
+  final List<Widget> intensity = <Widget>[
+    Text('ちょっと頑張った'),
+    Text('普通に頑張った'),
+    Text('すごく頑張った！'),
+  ];
 
-class _DropdownButtonCleanSpotState extends State<DropdownButtonCleanSpot> {
-  String dropdownValue = cleanSpotList.first;
+  String spot = "";
+  List<bool> _selectedintensityList = <bool>[true, false, false];
+  int selectedIntensity = 0;
+  bool _is_share = false;
+  String comment = '';
+  String? user_id;
 
   @override
-  Widget build(BuildContext context) {
+  void initState() {
+    super.initState();
+    spot = cleanSpotList.first;
+    user_id = widget.user_id;
+  }
+
+  Widget DropdownButtonCleanSpot() {
     return DropdownButton<String>(
-      value: dropdownValue,
+      value: spot,
       icon: const Icon(Icons.arrow_downward),
       elevation: 16,
       style: const TextStyle(color: Colors.deepPurple),
@@ -66,7 +69,7 @@ class _DropdownButtonCleanSpotState extends State<DropdownButtonCleanSpot> {
       ),
       onChanged: (String? value) {
         setState(() {
-          dropdownValue = value!;
+          spot = value!;
         });
       },
       items: cleanSpotList.map<DropdownMenuItem<String>>((String value) {
@@ -77,36 +80,17 @@ class _DropdownButtonCleanSpotState extends State<DropdownButtonCleanSpot> {
       }).toList(),
     );
   }
-}
 
-const List<Widget> intensity = <Widget>[
-  Text('ちょっと頑張った'),
-  Text('普通に頑張った'),
-  Text('すごく頑張った！')
-];
-
-class ToggleButtonsCleaningIntensity extends StatefulWidget {
-  const ToggleButtonsCleaningIntensity({super.key});
-
-  @override
-  State<ToggleButtonsCleaningIntensity> createState() =>
-      _ToggleButtonCleaningIntensityState();
-}
-
-class _ToggleButtonCleaningIntensityState
-    extends State<ToggleButtonsCleaningIntensity> {
-  final List<bool> _selectedintensity = <bool>[true, false, false];
-  bool vertical = false;
-
-  @override
-  Widget build(BuildContext context) {
+  Widget ToggleButtonsCleaningIntensity() {
+    bool vertical = false;
     return ToggleButtons(
       direction: vertical ? Axis.vertical : Axis.horizontal,
       onPressed: (int index) {
         setState(() {
+          selectedIntensity = index;
           // The button that is tapped is set to true, and the others to false.
-          for (int i = 0; i < _selectedintensity.length; i++) {
-            _selectedintensity[i] = i == index;
+          for (int i = 0; i < _selectedintensityList.length; i++) {
+            _selectedintensityList[i] = i == index;
           }
         });
       },
@@ -119,25 +103,12 @@ class _ToggleButtonCleaningIntensityState
         minHeight: 40.0,
         minWidth: 80.0,
       ),
-      isSelected: _selectedintensity,
+      isSelected: _selectedintensityList,
       children: intensity,
     );
   }
-}
 
-class SwitchListTileShareFlag extends StatefulWidget {
-  const SwitchListTileShareFlag({super.key});
-
-  @override
-  State<SwitchListTileShareFlag> createState() =>
-      _SwitchListTileShareFlagState();
-}
-
-class _SwitchListTileShareFlagState extends State<SwitchListTileShareFlag> {
-  bool _is_share = false;
-
-  @override
-  Widget build(BuildContext context) {
+  Widget SwitchListTileShareFlag() {
     return SwitchListTile(
       title: const Text('isShare'),
       value: _is_share,
@@ -146,6 +117,38 @@ class _SwitchListTileShareFlagState extends State<SwitchListTileShareFlag> {
           _is_share = value;
         });
       },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        ToggleButtonsCleaningIntensity(),
+        DropdownButtonCleanSpot(),
+        TextField(onChanged: (String txt) {
+          comment = txt;
+        }),
+        SwitchListTileShareFlag(),
+        ElevatedButton(
+            onPressed: () async {
+              final post = Post(
+                user_id: user_id,
+                is_share: _is_share,
+                comment: comment,
+                spot: spot,
+                intensity: selectedIntensity,
+                created_at: DateTime.now(),
+              );
+              await apiService.addPost(post);
+              Navigator.of(context).pop();
+            },
+            child: const Text(
+              '投稿',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            )),
+      ],
     );
   }
 }
