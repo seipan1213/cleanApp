@@ -191,15 +191,19 @@ class ApiService {
   Future<List<Post>> getPosts({String user_id = ""}) async {
     var ref;
     if (!user_id.isEmpty) {
-      ref =
-          db.collection('posts').where('uid', isEqualTo: user_id).withConverter(
-                fromFirestore: Post.fromFirestore,
-                toFirestore: (Post post, _) => post.toFirestore(),
-              );
+      ref = db
+          .collection('posts')
+          .where('uid', isEqualTo: user_id)
+          .orderBy('created_at', descending: true)
+          .withConverter(
+            fromFirestore: Post.fromFirestore,
+            toFirestore: (Post post, _) => post.toFirestore(),
+          );
     } else {
       ref = db
           .collection('posts')
           .where('is_share', isEqualTo: true)
+          .orderBy('created_at', descending: true)
           .withConverter(
             fromFirestore: Post.fromFirestore,
             toFirestore: (Post post, _) => post.toFirestore(),
