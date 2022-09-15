@@ -70,7 +70,7 @@ class _PostInfoState extends State<PostInfo> {
                         Expanded(
                             flex: 4,
                             child: Text(
-                              postList[index].user_id!,
+                              "@${postList[index].user_id!}",
                               overflow: TextOverflow.ellipsis,
                               style: Theme.of(context).textTheme.titleLarge,
                             )),

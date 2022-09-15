@@ -19,6 +19,20 @@ class PostPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(title),
+        leading: IconButton(
+            icon: Icon(Icons.close),
+            onPressed: () {
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(
+                  fullscreenDialog: true,
+                  builder: (BuildContext context) => MyHomePage(
+                    title: "Home",
+                    user_id: user_id!,
+                  ),
+                ),
+              );
+            }),
+        automaticallyImplyLeading: false,
       ),
       body: PostForm(
         user_id: user_id,
@@ -42,18 +56,9 @@ class _PostFormState extends State<PostForm> {
     3: 'トイレ',
   };
   final List<Widget> intensity = <Widget>[
-    Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Text('ちょっと頑張った'),
-    ),
-    Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Text('普通に頑張った'),
-    ),
-    Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Text('すごく頑張った！'),
-    ),
+    Center(child: Text('ちょっと\n頑張った')),
+    Center(child: Text('普通に\n頑張った')),
+    Center(child: Text('すごく\n頑張った！')),
   ];
 
   String? spot = "";
@@ -123,8 +128,8 @@ class _PostFormState extends State<PostForm> {
       },
       borderRadius: const BorderRadius.all(Radius.circular(8)),
       constraints: BoxConstraints(
-        minHeight: 40.0,
-        minWidth: MediaQuery.of(context).size.width * 0.28,
+        minHeight: 50.0,
+        minWidth: MediaQuery.of(context).size.width * 0.2,
       ),
       isSelected: _selectedintensityList,
       children: intensity,
@@ -226,9 +231,12 @@ class _PostFormState extends State<PostForm> {
                   ),
                 )),
             SizedBox(
-              height: 30,
+              height: 20,
             ),
             ToggleButtonsCleaningIntensity(),
+            SizedBox(
+              height: 30,
+            ),
             DropdownButtonCleanSpot(),
             SwitchListTileShareFlag(),
             TextField(

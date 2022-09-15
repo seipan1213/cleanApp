@@ -38,11 +38,11 @@ class _CleaningSettingFormsState extends State<CleaningSettingForms> {
       value: dropdownValue[id].toString(),
       icon: const Icon(Icons.arrow_downward),
       elevation: 16,
-      style: const TextStyle(color: Colors.deepPurple),
-      underline: Container(
-        height: 2,
-        color: Colors.deepPurpleAccent,
-      ),
+      // style: const TextStyle(color: Colors.deepPurple),
+      // underline: Container(
+      //   height: 2,
+      //   color: Colors.deepPurpleAccent,
+      // ),
       onChanged: (String? value) {
         setState(() {
           dropdownValue[id] = int.parse(value!);
@@ -71,7 +71,10 @@ class _CleaningSettingFormsState extends State<CleaningSettingForms> {
       forms.add(Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-          Text(setting.spot!),
+          Text(
+            setting.spot!,
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
           DropdownButtonCleaningInterval(i),
         ],
       ));
@@ -80,33 +83,47 @@ class _CleaningSettingFormsState extends State<CleaningSettingForms> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Text(
+            "リマインド設定",
+            style: Theme.of(context).textTheme.headlineMedium,
+          ),
+          Text(
+            "最後の掃除から、指定の時間後に通知します。",
+            style: Theme.of(context).textTheme.bodyLarge,
+          ),
           ...forms,
-          ElevatedButton(
-              onPressed: () {
-                List<CleaningSetting> settings = [
-                  CleaningSetting(
-                      user_uid: cleaningSettings[0].user_uid,
-                      spot: cleaningSettings[0].spot,
-                      remind_interval: dropdownValue[0]),
-                  CleaningSetting(
-                      user_uid: cleaningSettings[1].user_uid,
-                      spot: cleaningSettings[1].spot,
-                      remind_interval: dropdownValue[1]),
-                  CleaningSetting(
-                      user_uid: cleaningSettings[2].user_uid,
-                      spot: cleaningSettings[2].spot,
-                      remind_interval: dropdownValue[2]),
-                ];
-                apiService.updateCleaningSettings(settings);
-                cleaningSettings = settings;
-              },
-              child: const Text(
-                '更新',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              )),
-          Divider(),
+          Align(
+            alignment: Alignment.center,
+            child: ElevatedButton(
+                onPressed: () {
+                  List<CleaningSetting> settings = [
+                    CleaningSetting(
+                        user_uid: cleaningSettings[0].user_uid,
+                        spot: cleaningSettings[0].spot,
+                        remind_interval: dropdownValue[0]),
+                    CleaningSetting(
+                        user_uid: cleaningSettings[1].user_uid,
+                        spot: cleaningSettings[1].spot,
+                        remind_interval: dropdownValue[1]),
+                    CleaningSetting(
+                        user_uid: cleaningSettings[2].user_uid,
+                        spot: cleaningSettings[2].spot,
+                        remind_interval: dropdownValue[2]),
+                  ];
+                  apiService.updateCleaningSettings(settings);
+                  cleaningSettings = settings;
+                },
+                child: Container(
+                  width: MediaQuery.of(context).size.width * 0.85,
+                  alignment: Alignment.center,
+                  child: Text(
+                    '更新',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                )),
+          ),
         ],
       ),
     );

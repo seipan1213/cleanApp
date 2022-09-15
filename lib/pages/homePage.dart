@@ -74,7 +74,7 @@ class _MyHomePageState extends State<MyHomePage> {
               label: 'TimeLine',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.people_alt),
+              icon: Icon(Icons.man),
               label: 'Profile',
             ),
             BottomNavigationBarItem(

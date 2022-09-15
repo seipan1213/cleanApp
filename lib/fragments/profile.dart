@@ -45,9 +45,13 @@ class _UserInfoState extends State<UserInfo> {
       children: [
         Expanded(
           flex: 1,
-          child: Text(
-            user?.user_id ?? "",
-            style: Theme.of(context).textTheme.displayMedium,
+          child: Row(
+            children: [
+              Text(
+                "${user?.user_id}",
+                style: Theme.of(context).textTheme.displayMedium,
+              ),
+            ],
           ),
         ),
         Expanded(
@@ -75,7 +79,7 @@ class _UserInfoState extends State<UserInfo> {
                         Expanded(
                             flex: 4,
                             child: Text(
-                              postList[index].user_id!,
+                              "@${postList[index].user_id!}",
                               overflow: TextOverflow.ellipsis,
                               style: Theme.of(context).textTheme.titleLarge,
                             )),
