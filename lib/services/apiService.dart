@@ -4,12 +4,12 @@ final db = FirebaseFirestore.instance;
 final apiService = ApiService();
 
 class CleaningSetting {
-  final int? name;
+  final String? user_uid;
   final String? spot;
   final int? remind_interval;
 
   CleaningSetting({
-    this.name,
+    this.user_uid,
     this.spot,
     this.remind_interval,
   });
@@ -20,7 +20,7 @@ class CleaningSetting {
   ) {
     final data = snapshot.data();
     return CleaningSetting(
-      name: data?['name'],
+      user_uid: data?['user_uid'],
       spot: data?['spot'],
       remind_interval: data?['remind_interval'],
     );
@@ -28,7 +28,7 @@ class CleaningSetting {
 
   Map<String, dynamic> toFirestore() {
     return {
-      if (name != null) "name": name,
+      if (user_uid != null) "user_uid": user_uid,
       if (spot != null) "spot": spot,
       if (remind_interval != null) "remind_interval": remind_interval,
     };
@@ -61,7 +61,19 @@ class User {
 }
 
 class ApiService {
-  void addCleaningSetting(CleaningSetting request) async {}
+  void addCleaningSettings(List<CleaningSetting> settings) async {
+    for (final setting in settings) {
+      final docRef = db
+          .collection("users/${setting.user_uid}/cleaningSettings")
+          .withConverter(
+            fromFirestore: CleaningSetting.fromFirestore,
+            toFirestore: (CleaningSetting setting, options) =>
+                setting.toFirestore(),
+          )
+          .doc();
+      await docRef.set(setting);
+    }
+  }
 
   void addUser(User user) async {
     final docRef = db
@@ -72,5 +84,11 @@ class ApiService {
         )
         .doc(user.uid);
     await docRef.set(user);
+  }
+
+  void addUserWithCleaningSettings(
+      User user, List<CleaningSetting> settings) async {
+    addUser(user);
+    addCleaningSettings(settings);
   }
 }
