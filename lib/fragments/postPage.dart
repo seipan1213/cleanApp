@@ -149,7 +149,8 @@ class _PostFormState extends State<PostForm> {
                 created_at: DateTime.now(),
               );
               await apiService.addPost(post);
-              Navigator.of(context).pop();
+               Navigator.of(context).pop();
+
               int id;
               for (id = 1; id <= cleanSpotList.length; id++) {
                 if (spot == cleanSpotList[id]) {

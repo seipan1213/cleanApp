@@ -89,16 +89,6 @@ class UserInfo extends StatelessWidget {
                           '\n' +
                           postList[index % 3]['comment']!,
                     ),
-                    // title: Column(
-                    //   crossAxisAlignment: CrossAxisAlignment.start,
-                    //   children: [
-                    //     Text(
-                    //       postList[index % 3]['username']!,
-                    //       overflow: TextOverflow.ellipsis,
-                    //     ),
-
-                    //   ],
-                    // ),
                   ),
                 );
               }),

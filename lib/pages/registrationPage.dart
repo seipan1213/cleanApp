@@ -14,7 +14,7 @@ class RegistrationPage extends StatefulWidget {
 class _RegistrationPageState extends State<RegistrationPage> {
   String newEmail = ""; // 入力されたメールアドレス
   String newPassword = ""; // 入力されたパスワード
-  String newName = ""; // 入力されたパスワード
+  String newUserId = ""; // 入力されたパスワード
   String infoText = ""; // 登録に関する情報を表示
   bool pswd_OK = false; // パスワードが有効な文字数を満たしているかどうか
 
@@ -39,13 +39,13 @@ class _RegistrationPageState extends State<RegistrationPage> {
                     style:
                         TextStyle(fontSize: 20, fontWeight: FontWeight.bold))),
 
-            // お名前の入力フォーム
+            // ユーザIDの入力フォーム
             Padding(
                 padding: EdgeInsets.fromLTRB(25.0, 0, 25.0, 0),
                 child: TextFormField(
-                  decoration: InputDecoration(labelText: "お名前"),
+                  decoration: InputDecoration(labelText: "ユーザID"),
                   onChanged: (String value) {
-                    newName = value;
+                    newUserId = value;
                   },
                 )),
 
@@ -96,52 +96,59 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 onPressed: () async {
                   if (pswd_OK) {
                     try {
-                      // メール/パスワードでユーザー登録
-                      result = await auth.createUserWithEmailAndPassword(
-                        email: newEmail,
-                        password: newPassword,
-                      );
-
-                      // 登録成功
-                      // 登録したユーザー情報
-                      user = result?.user;
-
-                      API.User api_user = API.User(
-                        name: newName,
-                        uid: user!.uid,
-                      );
-
-                      List<API.CleaningSetting> settings = [
-                        API.CleaningSetting(
-                            user_uid: user!.uid,
-                            spot: '風呂',
-                            remind_interval: 1),
-                        API.CleaningSetting(
-                            user_uid: user!.uid,
-                            spot: 'リビング',
-                            remind_interval: 1),
-                        API.CleaningSetting(
-                            user_uid: user!.uid,
-                            spot: 'トイレ',
-                            remind_interval: 1),
-                      ];
-                      await API.apiService
-                          .addUserWithCleaningSettings(api_user, settings);
-                      cleaningSettings = settings;
-
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => MyHomePage(
-                              title: 'Cleaning Reminder',
-                              user_id: user!.uid,
-                            ),
-                          ));
-                    } catch (e) {
-                      // 登録に失敗した場合
+                      await API.apiService.getUser(newUserId);
                       setState(() {
-                        infoText = auth_error.register_error_msg(e.toString());
+                        infoText = '既に使われている「ユーザID」です。';
                       });
+                    } catch (e) {
+                      try {
+                        // メール/パスワードでユーザー登録
+                        result = await auth.createUserWithEmailAndPassword(
+                          email: newEmail,
+                          password: newPassword,
+                        );
+
+                        // 登録成功
+                        // 登録したユーザー情報
+                        user = result?.user;
+
+                        API.User api_user = API.User(
+                          uid: newUserId,
+                        );
+
+                        List<API.CleaningSetting> settings = [
+                          API.CleaningSetting(
+                              user_uid: user!.uid,
+                              spot: '風呂',
+                              remind_interval: 1),
+                          API.CleaningSetting(
+                              user_uid: user!.uid,
+                              spot: 'リビング',
+                              remind_interval: 1),
+                          API.CleaningSetting(
+                              user_uid: user!.uid,
+                              spot: 'トイレ',
+                              remind_interval: 1),
+                        ];
+                        await API.apiService
+                            .addUserWithCleaningSettings(api_user, settings);
+                        cleaningSettings = settings;
+
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => MyHomePage(
+                                title: 'Cleaning Reminder',
+                                user_id: user!.uid,
+                              ),
+                            ));
+                      } catch (e) {
+                        // 登録に失敗した場合
+                        setState(() {
+                          infoText =
+                              auth_error.register_error_msg(e.toString());
+                        });
+                      }
                     }
                   } else {
                     setState(() {

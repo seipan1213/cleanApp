@@ -37,10 +37,9 @@ class CleaningSetting {
 }
 
 class User {
-  final String? name;
   final String? uid;
 
-  User({this.name, this.uid});
+  User({this.uid});
 
   factory User.fromFirestore(
     DocumentSnapshot<Map<String, dynamic>> snapshot,
@@ -48,14 +47,12 @@ class User {
   ) {
     final data = snapshot.data();
     return User(
-      name: data?['name'],
       uid: data?['uid'],
     );
   }
 
   Map<String, dynamic> toFirestore() {
     return {
-      if (name != null) "name": name,
       if (uid != null) "uid": uid,
     };
   }
