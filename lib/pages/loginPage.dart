@@ -90,7 +90,7 @@ class _LoginPageState extends State<LoginPage> {
                           context,
                           MaterialPageRoute(
                             builder: (context) => MyHomePage(
-                              title: 'Cleaning Reminder',
+                              title: 'Home',
                               user_id: user!.uid,
                             ),
                           ));

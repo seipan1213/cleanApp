@@ -139,7 +139,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                             context,
                             MaterialPageRoute(
                               builder: (context) => MyHomePage(
-                                title: 'Cleaning Reminder',
+                                title: 'Home',
                                 user_id: user!.uid,
                               ),
                             ));
