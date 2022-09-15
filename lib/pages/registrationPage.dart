@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:rakuten_demo/main.dart';
 import 'package:rakuten_demo/pages/homePage.dart';
+import 'package:rakuten_demo/services/apiService.dart' as API;
 import 'package:rakuten_demo/services/authentication_error.dart';
 
 // アカウント登録ページ
@@ -12,6 +14,7 @@ class RegistrationPage extends StatefulWidget {
 class _RegistrationPageState extends State<RegistrationPage> {
   String newEmail = ""; // 入力されたメールアドレス
   String newPassword = ""; // 入力されたパスワード
+  String newName = ""; // 入力されたパスワード
   String infoText = ""; // 登録に関する情報を表示
   bool pswd_OK = false; // パスワードが有効な文字数を満たしているかどうか
 
@@ -35,6 +38,16 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 child: Text('新規アカウントの作成',
                     style:
                         TextStyle(fontSize: 20, fontWeight: FontWeight.bold))),
+
+            // お名前の入力フォーム
+            Padding(
+                padding: EdgeInsets.fromLTRB(25.0, 0, 25.0, 0),
+                child: TextFormField(
+                  decoration: InputDecoration(labelText: "お名前"),
+                  onChanged: (String value) {
+                    newName = value;
+                  },
+                )),
 
             // メールアドレスの入力フォーム
             Padding(
@@ -92,6 +105,30 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       // 登録成功
                       // 登録したユーザー情報
                       user = result?.user;
+
+                      API.User api_user = API.User(
+                        name: newName,
+                        uid: user!.uid,
+                      );
+
+                      List<API.CleaningSetting> settings = [
+                        API.CleaningSetting(
+                            user_uid: user!.uid,
+                            spot: '風呂',
+                            remind_interval: 1),
+                        API.CleaningSetting(
+                            user_uid: user!.uid,
+                            spot: 'リビング',
+                            remind_interval: 1),
+                        API.CleaningSetting(
+                            user_uid: user!.uid,
+                            spot: 'トイレ',
+                            remind_interval: 1),
+                      ];
+                      await API.apiService
+                          .addUserWithCleaningSettings(api_user, settings);
+                      cleaningSettings = settings;
+
                       Navigator.push(
                           context,
                           MaterialPageRoute(

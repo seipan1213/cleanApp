@@ -34,7 +34,7 @@ class _MyHomePageState extends State<MyHomePage> {
     List<Widget> pages = [
       PostInfo(),
       UserInfo(),
-      CleaningSettingForms(userId: 'aaa')
+      CleaningSettingForms(user_id: user_id)
     ];
     void onTapItem(int index) {
       setState(() {

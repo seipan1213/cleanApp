@@ -1,81 +1,41 @@
 import 'dart:ffi';
 
 import 'package:flutter/material.dart';
-
-import 'package:flutter/material.dart';
+import 'package:rakuten_demo/main.dart';
+import 'package:rakuten_demo/services/apiService.dart';
 
 class CleaningSettingForms extends StatefulWidget {
-  const CleaningSettingForms({super.key, required userId});
+  const CleaningSettingForms({super.key, required this.user_id});
+  final user_id;
+
   @override
   State<CleaningSettingForms> createState() => _CleaningSettingFormsState();
 }
 
 class _CleaningSettingFormsState extends State<CleaningSettingForms> {
-  // 通信して現在の値を取得
-  List<Map> data = [
-    {'user_id': 'hoge', 'spot': '風呂', 'interval': '1'},
-    {'user_id': 'hoge', 'spot': 'トイレ', 'interval': '1'},
-    {'user_id': 'hoge', 'spot': 'リビング', 'interval': '1'},
-  ];
   List<Widget> forms = [];
+  List<int?> dropdownValue = [];
+  final List<String> cleaningIntervalList = <String>["1", "2", "3", "4"];
+
+  String? user_id;
+
   @override
   void initState() {
     // TODO: implement initState
+    user_id = widget.user_id;
     forms = [];
     super.initState();
+    for (final setting in cleaningSettings) {
+      dropdownValue.add(setting.remind_interval);
+    }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    forms = [];
-    data.forEach((element) {
-      forms.add(Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          DropdownButtonCleanSpot(
-            defaultValue: element['spot'],
-          ),
-          DropdownButtonCleaningInterval(
-            defaultValue: element['interval'],
-          ),
-          ElevatedButton(
-              onPressed: () {},
-              child: const Text(
-                '投稿',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              )),
-        ],
-      ));
-    });
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [...forms],
-    );
-  }
-}
-
-class DropdownButtonCleanSpot extends StatefulWidget {
-  final defaultValue;
-  const DropdownButtonCleanSpot({super.key, this.defaultValue});
-  @override
-  State<DropdownButtonCleanSpot> createState() =>
-      _DropdownButtonCleanSpotState();
-}
-
-final List<String> cleanSpotList = <String>['風呂', 'リビング', 'トイレ'];
-
-class _DropdownButtonCleanSpotState extends State<DropdownButtonCleanSpot> {
-  String? dropdownValue;
-  @override
-  void initState() {
-    super.initState();
-    dropdownValue = widget.defaultValue;
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget DropdownButtonCleaningInterval(int id) {
+    if (dropdownValue[id] == null) {
+      return const CircularProgressIndicator();
+    }
     return DropdownButton<String>(
-      value: dropdownValue,
+      value: dropdownValue[id].toString(),
       icon: const Icon(Icons.arrow_downward),
       elevation: 16,
       style: const TextStyle(color: Colors.deepPurple),
@@ -85,53 +45,7 @@ class _DropdownButtonCleanSpotState extends State<DropdownButtonCleanSpot> {
       ),
       onChanged: (String? value) {
         setState(() {
-          dropdownValue = value!;
-        });
-      },
-      items: cleanSpotList.map<DropdownMenuItem<String>>((String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value),
-        );
-      }).toList(),
-    );
-  }
-}
-
-class DropdownButtonCleaningInterval extends StatefulWidget {
-  final defaultValue;
-  const DropdownButtonCleaningInterval({super.key, this.defaultValue});
-
-  @override
-  State<DropdownButtonCleaningInterval> createState() =>
-      _DropdownButtonCleaningIntervalState();
-}
-
-final List<String> cleaningIntervalList = <String>["1", "2", "3", "4"];
-
-class _DropdownButtonCleaningIntervalState
-    extends State<DropdownButtonCleaningInterval> {
-  String? dropdownValue;
-  @override
-  void initState() {
-    super.initState();
-    dropdownValue = widget.defaultValue;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return DropdownButton<String>(
-      value: dropdownValue,
-      icon: const Icon(Icons.arrow_downward),
-      elevation: 16,
-      style: const TextStyle(color: Colors.deepPurple),
-      underline: Container(
-        height: 2,
-        color: Colors.deepPurpleAccent,
-      ),
-      onChanged: (String? value) {
-        setState(() {
-          dropdownValue = value!;
+          dropdownValue[id] = int.parse(value!);
         });
       },
       items: cleaningIntervalList.map<DropdownMenuItem<String>>((String value) {
@@ -148,75 +62,53 @@ class _DropdownButtonCleaningIntervalState
       }).toList(),
     );
   }
-}
-
-const List<Widget> intensity = <Widget>[
-  Text('ちょっと頑張った'),
-  Text('普通に頑張った'),
-  Text('すごく頑張った！')
-];
-
-class ToggleButtonsCleaningIntensity extends StatefulWidget {
-  const ToggleButtonsCleaningIntensity({super.key});
-
-  @override
-  State<ToggleButtonsCleaningIntensity> createState() =>
-      _ToggleButtonCleaningIntensityState();
-}
-
-class _ToggleButtonCleaningIntensityState
-    extends State<ToggleButtonsCleaningIntensity> {
-  final List<bool> _selectedintensity = <bool>[true, false, false];
-  bool vertical = false;
 
   @override
   Widget build(BuildContext context) {
-    return ToggleButtons(
-      direction: vertical ? Axis.vertical : Axis.horizontal,
-      onPressed: (int index) {
-        setState(() {
-          // The button that is tapped is set to true, and the others to false.
-          for (int i = 0; i < _selectedintensity.length; i++) {
-            _selectedintensity[i] = i == index;
-          }
-        });
-      },
-      borderRadius: const BorderRadius.all(Radius.circular(8)),
-      selectedBorderColor: Colors.red[700],
-      selectedColor: Colors.white,
-      fillColor: Colors.red[200],
-      color: Colors.red[400],
-      constraints: const BoxConstraints(
-        minHeight: 40.0,
-        minWidth: 80.0,
+    forms = [];
+    for (int i = 0; i < cleaningSettings.length; i++) {
+      final setting = cleaningSettings[i];
+      forms.add(Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Text(setting.spot!),
+          DropdownButtonCleaningInterval(i),
+        ],
+      ));
+    }
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 15),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          ...forms,
+          ElevatedButton(
+              onPressed: () {
+                List<CleaningSetting> settings = [
+                  CleaningSetting(
+                      user_uid: cleaningSettings[0].user_uid,
+                      spot: cleaningSettings[0].spot,
+                      remind_interval: dropdownValue[0]),
+                  CleaningSetting(
+                      user_uid: cleaningSettings[1].user_uid,
+                      spot: cleaningSettings[1].spot,
+                      remind_interval: dropdownValue[1]),
+                  CleaningSetting(
+                      user_uid: cleaningSettings[2].user_uid,
+                      spot: cleaningSettings[2].spot,
+                      remind_interval: dropdownValue[2]),
+                ];
+                apiService.updateCleaningSettings(settings);
+                cleaningSettings = settings;
+              },
+              child: const Text(
+                '投稿',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              )),
+          Divider(),
+        ],
       ),
-      isSelected: _selectedintensity,
-      children: intensity,
-    );
-  }
-}
-
-class SwitchListTileShareFlag extends StatefulWidget {
-  const SwitchListTileShareFlag({super.key});
-
-  @override
-  State<SwitchListTileShareFlag> createState() =>
-      _SwitchListTileShareFlagState();
-}
-
-class _SwitchListTileShareFlagState extends State<SwitchListTileShareFlag> {
-  bool _is_share = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return SwitchListTile(
-      title: const Text('isShare'),
-      value: _is_share,
-      onChanged: (bool value) {
-        setState(() {
-          _is_share = value;
-        });
-      },
     );
   }
 }
