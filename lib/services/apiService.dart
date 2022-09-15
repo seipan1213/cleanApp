@@ -147,4 +147,17 @@ class ApiService {
         .doc();
     await docRef.set(post);
   }
+
+  Future<User> getUser(String user_id) async {
+    final ref = db.collection('users').doc(user_id).withConverter(
+          fromFirestore: User.fromFirestore,
+          toFirestore: (User user, _) => user.toFirestore(),
+        );
+    final docSnap = await ref.get();
+    final user = docSnap.data();
+    if (user == null) {
+      throw ErrorDescription('not found user (user_id = ${user_id})');
+    }
+    return user as User;
+  }
 }
