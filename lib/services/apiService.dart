@@ -106,7 +106,7 @@ class Post {
 }
 
 class ApiService {
-  void addCleaningSettings(List<CleaningSetting> settings) async {
+  Future<void> addCleaningSettings(List<CleaningSetting> settings) async {
     for (final setting in settings) {
       final docRef = db
           .collection("users/${setting.user_uid}/cleaningSettings")
@@ -120,7 +120,7 @@ class ApiService {
     }
   }
 
-  void addUser(User user) async {
+  Future<void> addUser(User user) async {
     final docRef = db
         .collection("users")
         .withConverter(
@@ -134,13 +134,13 @@ class ApiService {
   /**
    * 必ずCleaningSettingは3つ
    */
-  void addUserWithCleaningSettings(
+  Future<void> addUserWithCleaningSettings(
       User user, List<CleaningSetting> settings) async {
     addUser(user);
     addCleaningSettings(settings);
   }
 
-  void addPost(Post post) async {
+  Future<void> addPost(Post post) async {
     final docRef = db
         .collection("posts")
         .withConverter(

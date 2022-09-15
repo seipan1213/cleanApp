@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rakuten_demo/firebase_options.dart';
+import 'package:rakuten_demo/fragments/postPage.dart';
 import 'package:rakuten_demo/pages/loginPage.dart';
 import 'package:rakuten_demo/services/apiService.dart';
 import 'fragments/profile.dart';
@@ -26,80 +27,6 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-  int selectIndex = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    List<Widget> pages = [
-      PostInfo(),
-      UserInfo(),
-      Text('aaaaaaa'),
-    ];
-    void onTapItem(int index) {
-      setState(() {
-        selectIndex = index;
-      });
-    }
-
-    return WillPopScope(
-      onWillPop: () async {
-        return false;
-      },
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(widget.title),
-          automaticallyImplyLeading: false,
-        ),
-        body: pages[selectIndex],
-        floatingActionButton: FloatingActionButton(
-          onPressed: () async {},
-          tooltip: 'Increment',
-          child: const Icon(Icons.add),
-        ),
-
-        bottomNavigationBar: BottomNavigationBar(
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.settings),
-              label: 'TimeLine',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.people_alt),
-              label: 'Profile',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.settings),
-              label: 'Setting',
-            ),
-          ],
-          currentIndex: selectIndex,
-          onTap: onTapItem,
-        ),
-        // This trailing comma makes auto-formatting nicer for build methods.
-      ),
-    );
-  }
-}
-
-
 
 
 // required widgets
