@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 
 final db = FirebaseFirestore.instance;
 final apiService = ApiService();
@@ -60,6 +61,50 @@ class User {
   }
 }
 
+class Post {
+  final String? user_id;
+  final int? intensity;
+  final String? spot;
+  final String? comment;
+  final bool? is_share;
+  final DateTime? created_at;
+
+  Post({
+    this.user_id,
+    this.intensity,
+    this.spot,
+    this.comment,
+    this.is_share,
+    this.created_at,
+  });
+
+  factory Post.fromFirestore(
+    DocumentSnapshot<Map<String, dynamic>> snapshot,
+    SnapshotOptions? options,
+  ) {
+    final data = snapshot.data();
+    return Post(
+      user_id: data?['user_id'],
+      intensity: data?['intensity'],
+      spot: data?['spot'],
+      comment: data?['comment'],
+      is_share: data?['is_share'],
+      created_at: data?['created_at'],
+    );
+  }
+
+  Map<String, dynamic> toFirestore() {
+    return {
+      if (user_id != null) "user_id": user_id,
+      if (intensity != null) "intensity": intensity,
+      if (spot != null) "spot": spot,
+      if (comment != null) "comment": comment,
+      if (is_share != null) "is_share": is_share,
+      if (created_at != null) "created_at": created_at,
+    };
+  }
+}
+
 class ApiService {
   void addCleaningSettings(List<CleaningSetting> settings) async {
     for (final setting in settings) {
@@ -90,5 +135,16 @@ class ApiService {
       User user, List<CleaningSetting> settings) async {
     addUser(user);
     addCleaningSettings(settings);
+  }
+
+  void addPost(Post post) async {
+    final docRef = db
+        .collection("posts")
+        .withConverter(
+          fromFirestore: Post.fromFirestore,
+          toFirestore: (Post post, options) => post.toFirestore(),
+        )
+        .doc();
+    await docRef.set(post);
   }
 }
