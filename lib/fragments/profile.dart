@@ -77,14 +77,14 @@ class _UserInfoState extends State<UserInfo> {
                     title: Row(
                       children: [
                         Expanded(
-                            flex: 4,
+                            flex: 7,
                             child: Text(
                               "@${postList[index].user_id!}",
                               overflow: TextOverflow.ellipsis,
                               style: Theme.of(context).textTheme.titleLarge,
                             )),
                         Expanded(
-                          flex: 1,
+                          flex: 3,
                           child: Text(
                             formatter.format(postList[index].created_at!),
                             style: Theme.of(context).textTheme.labelSmall,
