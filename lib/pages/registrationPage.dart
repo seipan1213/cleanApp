@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:rakuten_demo/main.dart';
+import 'package:rakuten_demo/pages/homePage.dart';
 import 'package:rakuten_demo/services/authentication_error.dart';
 
 // アカウント登録ページ
@@ -95,8 +95,10 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) =>
-                                MyHomePage(title: 'Cleaning Reminder'),
+                            builder: (context) => MyHomePage(
+                              title: 'Cleaning Reminder',
+                              user_id: user!.uid,
+                            ),
                           ));
                     } catch (e) {
                       // 登録に失敗した場合

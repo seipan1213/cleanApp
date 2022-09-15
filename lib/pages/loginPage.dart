@@ -1,7 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:rakuten_demo/main.dart';
+import 'package:rakuten_demo/pages/homePage.dart';
 import 'package:rakuten_demo/services/authentication_error.dart';
 import 'package:rakuten_demo/pages/registrationPage.dart';
 
@@ -77,15 +77,16 @@ class _LoginPageState extends State<LoginPage> {
                         email: login_Email,
                         password: login_Password,
                       );
-
                       // ログイン成功
                       // ログインユーザーのIDを取得
                       user = result?.user;
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) =>
-                                MyHomePage(title: 'Cleaning Reminder'),
+                            builder: (context) => MyHomePage(
+                              title: 'Cleaning Reminder',
+                              user_id: user!.uid,
+                            ),
                           ));
                     } catch (e) {
                       // ログインに失敗した場合
