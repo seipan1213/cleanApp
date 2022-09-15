@@ -52,14 +52,13 @@ class _MyHomePageState extends State<MyHomePage> {
     List<Widget> pages = [
       PostInfo(),
       UserInfo(),
-      Text('aaaaaaa'),
+      CleaningSettingForms(userId: 'aaa'),
     ];
     void onTapItem(int index) {
       setState(() {
         selectIndex = index;
       });
     }
-
 
     return WillPopScope(
       onWillPop: () async {
