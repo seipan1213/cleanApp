@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/intl.dart';
 
 List postList = [
   {'content': 'aaaaaa'},
@@ -10,21 +12,75 @@ class UserInfo extends StatelessWidget {
   const UserInfo({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
+    initializeDateFormatting('ja');
+    final DateFormat formatter = new DateFormat('yyyy/MM/dd HH:mm', "ja_JP");
+    String date = formatter.format(new DateTime.now());
+    // 通信処理
+    String username = 'USERNAME';
+    var postList = [
+      {
+        'username': 'ああああああああああああああああああ',
+        'intensity': 'ちょっと頑張った',
+        'spot': '風呂',
+        'content': 'aaaaaa',
+        'created_at': formatter.format(new DateTime.now()),
+      },
+      {
+        'username': 'Disaster',
+        'intensity': '普通に頑張った',
+        'spot': 'リビング',
+        'content':
+            'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb',
+        'created_at': formatter.format(new DateTime.now()),
+      },
+      {
+        'username': 'う',
+        'intensity': 'すごく頑張った！',
+        'spot': 'トイレ',
+        'content': 'cccccc',
+        'created_at': formatter.format(new DateTime.now())
+      }
+    ];
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const SizedBox(
-          width: double.infinity,
-          height: 80,
-          child: Text('USERNAME'),
-        ),
+        Container(
+            height: 50,
+            child: Center(
+              child: Column(
+                children: [
+                  Text(
+                    'USERNAME',
+                    style: TextStyle(),
+                  ),
+                ],
+                mainAxisSize: MainAxisSize.min,
+              ),
+            )),
         Expanded(
           child: ListView.builder(
               itemCount: 100,
               itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text(postList[index % 3]['content']),
-                );
+                return Card(
+                    child: ListTile(
+                  isThreeLine: true,
+                  leading: Container(
+                      width: 80,
+                      child: Text(postList[index % 3]['username']!,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            decoration: TextDecoration.underline,
+                            fontSize: 14,
+                          ))),
+                  title: Text(
+                    postList[index % 3]['spot']!,
+                    style: TextStyle(fontSize: 13),
+                  ),
+                  subtitle: Text(postList[index % 3]['intensity']! +
+                      '\n${postList[index % 3]["content"]}'),
+                  trailing: Text(postList[index % 3]['created_at']!,
+                      style: TextStyle(fontSize: 10)),
+                ));
               }),
         )
       ],
