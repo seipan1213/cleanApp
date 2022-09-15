@@ -6,6 +6,7 @@ import 'package:rakuten_demo/services/apiService.dart';
 import '../fragments/profile.dart';
 import '../fragments/timeline.dart';
 import 'package:firebase_core/firebase_core.dart';
+import '../fragments/cleaningSetting.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title, required this.user_id});
@@ -33,7 +34,7 @@ class _MyHomePageState extends State<MyHomePage> {
     List<Widget> pages = [
       PostInfo(),
       UserInfo(),
-      Text('aaaaaaa'),
+      CleaningSettingForms(userId: 'aaa')
     ];
     void onTapItem(int index) {
       setState(() {

@@ -49,7 +49,10 @@ class UserInfo extends StatelessWidget {
             child: Center(
               child: Column(
                 children: [
-                  Text('USERNAME',style: TextStyle(),),
+                  Text(
+                    'USERNAME',
+                    style: TextStyle(),
+                  ),
                 ],
                 mainAxisSize: MainAxisSize.min,
               ),
@@ -70,7 +73,7 @@ class UserInfo extends StatelessWidget {
                             fontSize: 14,
                           ))),
                   title: Text(
-                    '場所：' + postList[index % 3]['spot']!,
+                    postList[index % 3]['spot']!,
                     style: TextStyle(fontSize: 13),
                   ),
                   subtitle: Text(postList[index % 3]['intensity']! +
