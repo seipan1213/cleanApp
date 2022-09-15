@@ -5,6 +5,7 @@ import 'package:rakuten_demo/pages/loginPage.dart';
 import 'package:rakuten_demo/services/apiService.dart';
 import 'fragments/profile.dart';
 import 'fragments/timeline.dart';
+import 'fragments/cleaningSetting.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 void main() async {
