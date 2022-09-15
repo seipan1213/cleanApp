@@ -96,7 +96,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 onPressed: () async {
                   if (pswd_OK) {
                     try {
-                      await API.apiService.getUser(newUserId);
+                      await API.apiService.isUsedUserId(newUserId);
                       setState(() {
                         infoText = '既に使われている「ユーザID」です。';
                       });
@@ -113,7 +113,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
                         user = result?.user;
 
                         API.User api_user = API.User(
-                          uid: newUserId,
+                          uid: user!.uid,
+                          user_id: newUserId,
                         );
 
                         List<API.CleaningSetting> settings = [

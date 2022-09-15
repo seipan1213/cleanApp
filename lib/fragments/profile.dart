@@ -1,46 +1,45 @@
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
+import 'package:rakuten_demo/services/apiService.dart';
 
-List postList = [
-  {'content': 'aaaaaa'},
-  {'content': 'bbbbb'},
-  {'content': 'cccccc'}
-];
+class UserInfo extends StatefulWidget {
+  const UserInfo({super.key, required this.user_id});
+  final user_id;
 
-class UserInfo extends StatelessWidget {
-  const UserInfo({Key? key}) : super(key: key);
+  @override
+  State<UserInfo> createState() => _UserInfoState();
+}
+
+class _UserInfoState extends State<UserInfo> {
+  List<Post> postList = [];
+
+  String? user_id;
+  bool isPostSet = false;
+  final List<String> intensity_str = <String>[
+    'ちょっと頑張った',
+    '普通に頑張った',
+    'すごく頑張った！',
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    user_id = widget.user_id;
+    Future(() async {
+      postList = await apiService.getPosts(user_id: user_id!);
+      setState(() {
+        isPostSet = true;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     initializeDateFormatting('ja');
     final DateFormat formatter = new DateFormat('yyyy/MM/dd', "ja_JP");
     String date = formatter.format(new DateTime.now());
     // 通信処理
-    String username = 'USERNAME';
-    var postList = [
-      {
-        'username': 'ああああああああああああああああああ',
-        'intensity': 'ちょっと頑張った',
-        'spot': '風呂',
-        'comment': 'aaaaaa',
-        'created_at': formatter.format(new DateTime.now()),
-      },
-      {
-        'username': 'Disaster',
-        'intensity': '普通に頑張った',
-        'spot': 'リビング',
-        'comment':
-            'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb',
-        'created_at': formatter.format(new DateTime.now()),
-      },
-      {
-        'username': 'う',
-        'intensity': 'すごく頑張った！',
-        'spot': 'トイレ',
-        'comment': 'cccccc',
-        'created_at': formatter.format(new DateTime.now())
-      }
-    ];
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -50,7 +49,7 @@ class UserInfo extends StatelessWidget {
               child: Column(
                 children: [
                   Text(
-                    'USERNAME',
+                    user_id!,
                     style: TextStyle(),
                   ),
                 ],
@@ -59,7 +58,7 @@ class UserInfo extends StatelessWidget {
             )),
         Expanded(
           child: ListView.builder(
-              itemCount: 100,
+              itemCount: postList.length,
               itemBuilder: (context, index) {
                 return Card(
                   child: ListTile(
@@ -68,13 +67,13 @@ class UserInfo extends StatelessWidget {
                         Expanded(
                             flex: 4,
                             child: Text(
-                              postList[index % 3]['username']!,
+                              postList[index].user_id!,
                               overflow: TextOverflow.ellipsis,
                             )),
                         Expanded(
                           flex: 1,
                           child: Text(
-                            postList[index % 3]['created_at']!,
+                            formatter.format(postList[index].created_at!),
                             style: Theme.of(context).textTheme.labelSmall,
                             textAlign: TextAlign.right,
                           ),
@@ -83,11 +82,11 @@ class UserInfo extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     ),
                     subtitle: Text(
-                      postList[index % 3]['spot']! +
+                      postList[index].spot! +
                           '\n' +
-                          postList[index % 3]['intensity']! +
+                          intensity_str[postList[index].intensity!] +
                           '\n' +
-                          postList[index % 3]['comment']!,
+                          postList[index].comment!,
                     ),
                   ),
                 );

@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -38,8 +40,9 @@ class CleaningSetting {
 
 class User {
   final String? uid;
+  final String? user_id;
 
-  User({this.uid});
+  User({this.uid, this.user_id});
 
   factory User.fromFirestore(
     DocumentSnapshot<Map<String, dynamic>> snapshot,
@@ -48,12 +51,14 @@ class User {
     final data = snapshot.data();
     return User(
       uid: data?['uid'],
+      user_id: data?['user_id'],
     );
   }
 
   Map<String, dynamic> toFirestore() {
     return {
       if (uid != null) "uid": uid,
+      if (user_id != null) "user_id": user_id,
     };
   }
 }
@@ -159,6 +164,20 @@ class ApiService {
       throw ErrorDescription('not found user (user_id = ${user_id})');
     }
     return user as User;
+  }
+
+  Future<void> isUsedUserId(String user_id) async {
+    final ref = db
+        .collection('users')
+        .where('user_id', isEqualTo: user_id)
+        .withConverter(
+          fromFirestore: User.fromFirestore,
+          toFirestore: (User user, _) => user.toFirestore(),
+        );
+    final docSnap = await ref.get();
+    if (docSnap.docs.length == 0) {
+      throw ErrorDescription('not found user (user_id = ${user_id})');
+    }
   }
 
   /**
