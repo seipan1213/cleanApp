@@ -1,7 +1,9 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:rakuten_demo/main.dart';
 import 'package:rakuten_demo/pages/homePage.dart';
+import 'package:rakuten_demo/services/apiService.dart' as API;
 import 'package:rakuten_demo/services/authentication_error.dart';
 import 'package:rakuten_demo/pages/registrationPage.dart';
 
@@ -77,9 +79,13 @@ class _LoginPageState extends State<LoginPage> {
                         email: login_Email,
                         password: login_Password,
                       );
+
                       // ログイン成功
                       // ログインユーザーのIDを取得
                       user = result?.user;
+
+                      cleaningSettings =
+                          await API.apiService.getCleaningSettings(user!.uid);
                       Navigator.push(
                           context,
                           MaterialPageRoute(
