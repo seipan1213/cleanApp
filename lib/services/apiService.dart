@@ -168,11 +168,13 @@ class ApiService {
   Future<List<Post>> getPosts({String user_id = ""}) async {
     var ref;
     if (!user_id.isEmpty) {
-      ref =
-          db.collection('posts').where(user_id, isEqualTo: true).withConverter(
-                fromFirestore: Post.fromFirestore,
-                toFirestore: (Post post, _) => post.toFirestore(),
-              );
+      ref = db
+          .collection('posts')
+          .where('user_id', isEqualTo: user_id)
+          .withConverter(
+            fromFirestore: Post.fromFirestore,
+            toFirestore: (Post post, _) => post.toFirestore(),
+          );
     } else {
       ref = db.collection('posts').withConverter(
             fromFirestore: Post.fromFirestore,
@@ -201,4 +203,17 @@ class ApiService {
     }
     return settings;
   }
+
+  void deletePost(Post post) async {
+    var referenceId;
+    QuerySnapshot snapshot = await db
+        .collection("posts")
+        .where('user_id', isEqualTo: post.user_id)
+        .where('created_at', isEqualTo: post.created_at)
+        .get();
+
+    db.collection("posts").doc(snapshot.docs.first.reference.id).delete();
+  }
+
+  // Setting Update
 }
