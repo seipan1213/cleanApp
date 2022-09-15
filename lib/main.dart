@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'fragments/profile.dart';
 import 'fragments/timeline.dart';
+import 'fragments/cleaningSetting.dart';
 
 void main() {
   runApp(const MyApp());
@@ -55,7 +56,8 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: pages[selectIndex],
+      // body: pages[selectIndex],
+      body: CleaningSettingForms(userId: 'aaa'),
       floatingActionButton: FloatingActionButton(
         onPressed: _incrementCounter,
         tooltip: 'Increment',
