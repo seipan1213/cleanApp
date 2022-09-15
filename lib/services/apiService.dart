@@ -89,7 +89,7 @@ class Post {
       spot: data?['spot'],
       comment: data?['comment'],
       is_share: data?['is_share'],
-      created_at: data?['created_at'],
+      created_at: data?['created_at'].toDate(),
     );
   }
 
@@ -159,5 +159,31 @@ class ApiService {
       throw ErrorDescription('not found user (user_id = ${user_id})');
     }
     return user as User;
+  }
+
+  /**
+   * 引数無 全て
+   * 引数有 user_idでフィルター
+   */
+  Future<List<Post>> getPosts({String user_id = ""}) async {
+    var ref;
+    if (!user_id.isEmpty) {
+      ref =
+          db.collection('posts').where(user_id, isEqualTo: true).withConverter(
+                fromFirestore: Post.fromFirestore,
+                toFirestore: (Post post, _) => post.toFirestore(),
+              );
+    } else {
+      ref = db.collection('posts').withConverter(
+            fromFirestore: Post.fromFirestore,
+            toFirestore: (Post post, _) => post.toFirestore(),
+          );
+    }
+    final docSnap = await ref.get();
+    var posts = <Post>[];
+    for (final snapshot in docSnap.docs) {
+      posts.add(snapshot.data() as Post);
+    }
+    return posts;
   }
 }
