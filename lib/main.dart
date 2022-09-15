@@ -70,10 +70,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         body: pages[selectIndex],
         floatingActionButton: FloatingActionButton(
-          onPressed: () async {
-            User user = User(name: "fuga", uid: "FUGA");
-            apiService.addUser(user);
-          },
+          onPressed: () async {},
           tooltip: 'Increment',
           child: const Icon(Icons.add),
         ),
