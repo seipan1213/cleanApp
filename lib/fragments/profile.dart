@@ -14,7 +14,7 @@ class UserInfo extends StatefulWidget {
 class _UserInfoState extends State<UserInfo> {
   List<Post> postList = [];
 
-  String? user_id;
+  User? user;
   bool isPostSet = false;
   final List<String> intensity_str = <String>[
     'ちょっと頑張った',
@@ -25,9 +25,9 @@ class _UserInfoState extends State<UserInfo> {
   @override
   void initState() {
     super.initState();
-    user_id = widget.user_id;
     Future(() async {
-      postList = await apiService.getPosts(user_id: user_id!);
+      user = await apiService.getUser(widget.user_id);
+      postList = await apiService.getPosts(user_id: widget.user_id!);
       setState(() {
         isPostSet = true;
       });
@@ -49,7 +49,7 @@ class _UserInfoState extends State<UserInfo> {
               child: Column(
                 children: [
                   Text(
-                    user_id!,
+                    user?.user_id ?? "",
                     style: TextStyle(),
                   ),
                 ],

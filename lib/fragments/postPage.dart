@@ -140,8 +140,10 @@ class _PostFormState extends State<PostForm> {
         SwitchListTileShareFlag(),
         ElevatedButton(
             onPressed: () async {
+              final user = await apiService.getUser(user_id!);
               final post = Post(
-                user_id: user_id,
+                uid: user_id,
+                user_id: user.user_id,
                 is_share: _is_share,
                 comment: comment,
                 spot: spot,
@@ -149,7 +151,7 @@ class _PostFormState extends State<PostForm> {
                 created_at: DateTime.now(),
               );
               await apiService.addPost(post);
-               Navigator.of(context).pop();
+              Navigator.of(context).pop();
 
               int id;
               for (id = 1; id <= cleanSpotList.length; id++) {

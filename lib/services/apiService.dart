@@ -64,6 +64,7 @@ class User {
 }
 
 class Post {
+  final String? uid;
   final String? user_id;
   final int? intensity;
   final String? spot;
@@ -72,6 +73,7 @@ class Post {
   final DateTime? created_at;
 
   Post({
+    this.uid,
     this.user_id,
     this.intensity,
     this.spot,
@@ -86,6 +88,7 @@ class Post {
   ) {
     final data = snapshot.data();
     return Post(
+      uid: data?['uid'],
       user_id: data?['user_id'],
       intensity: data?['intensity'],
       spot: data?['spot'],
@@ -97,6 +100,7 @@ class Post {
 
   Map<String, dynamic> toFirestore() {
     return {
+      if (uid != null) "uid": uid,
       if (user_id != null) "user_id": user_id,
       if (intensity != null) "intensity": intensity,
       if (spot != null) "spot": spot,
@@ -187,13 +191,11 @@ class ApiService {
   Future<List<Post>> getPosts({String user_id = ""}) async {
     var ref;
     if (!user_id.isEmpty) {
-      ref = db
-          .collection('posts')
-          .where('user_id', isEqualTo: user_id)
-          .withConverter(
-            fromFirestore: Post.fromFirestore,
-            toFirestore: (Post post, _) => post.toFirestore(),
-          );
+      ref =
+          db.collection('posts').where('uid', isEqualTo: user_id).withConverter(
+                fromFirestore: Post.fromFirestore,
+                toFirestore: (Post post, _) => post.toFirestore(),
+              );
     } else {
       ref = db
           .collection('posts')
