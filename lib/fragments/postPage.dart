@@ -16,26 +16,40 @@ class PostPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(title),
-        leading: IconButton(
-            icon: Icon(Icons.close),
-            onPressed: () {
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(
-                  fullscreenDialog: true,
-                  builder: (BuildContext context) => MyHomePage(
-                    title: "Home",
-                    user_id: user_id!,
+    return WillPopScope(
+      onWillPop: () async {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            fullscreenDialog: true,
+            builder: (BuildContext context) => MyHomePage(
+              title: "Home",
+              user_id: user_id!,
+            ),
+          ),
+        );
+        return false;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(title),
+          leading: IconButton(
+              icon: Icon(Icons.close),
+              onPressed: () {
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    fullscreenDialog: true,
+                    builder: (BuildContext context) => MyHomePage(
+                      title: "Home",
+                      user_id: user_id!,
+                    ),
                   ),
-                ),
-              );
-            }),
-        automaticallyImplyLeading: false,
-      ),
-      body: PostForm(
-        user_id: user_id,
+                );
+              }),
+          automaticallyImplyLeading: false,
+        ),
+        body: PostForm(
+          user_id: user_id,
+        ),
       ),
     );
   }
