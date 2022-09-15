@@ -131,6 +131,9 @@ class ApiService {
     await docRef.set(user);
   }
 
+  /**
+   * 必ずCleaningSettingは3つ
+   */
   void addUserWithCleaningSettings(
       User user, List<CleaningSetting> settings) async {
     addUser(user);
@@ -212,8 +215,23 @@ class ApiService {
         .where('created_at', isEqualTo: post.created_at)
         .get();
 
-    db.collection("posts").doc(snapshot.docs.first.reference.id).delete();
+    await db.collection("posts").doc(snapshot.docs.first.reference.id).delete();
   }
 
-  // Setting Update
+  void updateCleaningSettings(List<CleaningSetting> settings) async {
+    QuerySnapshot snapshot = await db
+        .collection("users/${settings.first.user_uid}/cleaningSettings")
+        .get();
+    for (int i = 0; i < settings.length; i++) {
+      final docRef = db
+          .collection("users/${settings[i].user_uid}/cleaningSettings")
+          .withConverter(
+            fromFirestore: CleaningSetting.fromFirestore,
+            toFirestore: (CleaningSetting setting, options) =>
+                setting.toFirestore(),
+          )
+          .doc(snapshot.docs[i].reference.id);
+      await docRef.set(settings[i]);
+    }
+  }
 }
