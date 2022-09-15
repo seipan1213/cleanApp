@@ -186,4 +186,19 @@ class ApiService {
     }
     return posts;
   }
+
+  Future<List<CleaningSetting>> getCleaningSettings(String user_id) async {
+    final ref = db
+        .collection('users/${user_id}/cleaningSettings')
+        .withConverter(
+          fromFirestore: CleaningSetting.fromFirestore,
+          toFirestore: (CleaningSetting setting, _) => setting.toFirestore(),
+        );
+    final docSnap = await ref.get();
+    var settings = <CleaningSetting>[];
+    for (final snapshot in docSnap.docs) {
+      settings.add(snapshot.data() as CleaningSetting);
+    }
+    return settings;
+  }
 }
