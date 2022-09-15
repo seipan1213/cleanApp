@@ -4,46 +4,6 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter/material.dart';
 
-class PostPage extends StatelessWidget {
-  PostPage({super.key, required this.title});
-
-  final String title;
-  int _counter = 0;
-
-  final Map<String, String> _dropDownMenu = {};
-
-  String comment = '';
-  String _selectedKey = '';
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            ToggleButtonsCleaningIntensity(),
-            DropdownButtonCleanSpot(),
-            TextField(onChanged: (String txt) {
-              comment = txt;
-            }),
-            SwitchListTileShareFlag(),
-            ElevatedButton(
-                onPressed: () {},
-                child: const Text(
-                  '投稿',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                )),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 class CleaningSettingForms extends StatefulWidget {
   const CleaningSettingForms({super.key, required userId});
   @override
