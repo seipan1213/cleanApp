@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -37,10 +39,10 @@ class CleaningSetting {
 }
 
 class User {
-  final String? name;
   final String? uid;
+  final String? user_id;
 
-  User({this.name, this.uid});
+  User({this.uid, this.user_id});
 
   factory User.fromFirestore(
     DocumentSnapshot<Map<String, dynamic>> snapshot,
@@ -48,20 +50,21 @@ class User {
   ) {
     final data = snapshot.data();
     return User(
-      name: data?['name'],
       uid: data?['uid'],
+      user_id: data?['user_id'],
     );
   }
 
   Map<String, dynamic> toFirestore() {
     return {
-      if (name != null) "name": name,
       if (uid != null) "uid": uid,
+      if (user_id != null) "user_id": user_id,
     };
   }
 }
 
 class Post {
+  final String? uid;
   final String? user_id;
   final int? intensity;
   final String? spot;
@@ -70,6 +73,7 @@ class Post {
   final DateTime? created_at;
 
   Post({
+    this.uid,
     this.user_id,
     this.intensity,
     this.spot,
@@ -84,6 +88,7 @@ class Post {
   ) {
     final data = snapshot.data();
     return Post(
+      uid: data?['uid'],
       user_id: data?['user_id'],
       intensity: data?['intensity'],
       spot: data?['spot'],
@@ -95,6 +100,7 @@ class Post {
 
   Map<String, dynamic> toFirestore() {
     return {
+      if (uid != null) "uid": uid,
       if (user_id != null) "user_id": user_id,
       if (intensity != null) "intensity": intensity,
       if (spot != null) "spot": spot,
@@ -164,6 +170,20 @@ class ApiService {
     return user as User;
   }
 
+  Future<void> isUsedUserId(String user_id) async {
+    final ref = db
+        .collection('users')
+        .where('user_id', isEqualTo: user_id)
+        .withConverter(
+          fromFirestore: User.fromFirestore,
+          toFirestore: (User user, _) => user.toFirestore(),
+        );
+    final docSnap = await ref.get();
+    if (docSnap.docs.length == 0) {
+      throw ErrorDescription('not found user (user_id = ${user_id})');
+    }
+  }
+
   /**
    * 引数無 isShare: trueのみ
    * 引数有 user_idでフィルター
@@ -173,7 +193,8 @@ class ApiService {
     if (!user_id.isEmpty) {
       ref = db
           .collection('posts')
-          .where('user_id', isEqualTo: user_id)
+          .where('uid', isEqualTo: user_id)
+          .orderBy('created_at', descending: true)
           .withConverter(
             fromFirestore: Post.fromFirestore,
             toFirestore: (Post post, _) => post.toFirestore(),
@@ -182,6 +203,7 @@ class ApiService {
       ref = db
           .collection('posts')
           .where('is_share', isEqualTo: true)
+          .orderBy('created_at', descending: true)
           .withConverter(
             fromFirestore: Post.fromFirestore,
             toFirestore: (Post post, _) => post.toFirestore(),

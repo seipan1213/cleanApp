@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rakuten_demo/pages/homePage.dart';
 import 'package:rakuten_demo/services/apiService.dart';
 import 'package:rakuten_demo/services/notifications_utils.dart';
 
@@ -140,8 +141,10 @@ class _PostFormState extends State<PostForm> {
         SwitchListTileShareFlag(),
         ElevatedButton(
             onPressed: () async {
+              final user = await apiService.getUser(user_id!);
               final post = Post(
-                user_id: user_id,
+                uid: user_id,
+                user_id: user.user_id,
                 is_share: _is_share,
                 comment: comment,
                 spot: spot,
@@ -149,7 +152,16 @@ class _PostFormState extends State<PostForm> {
                 created_at: DateTime.now(),
               );
               await apiService.addPost(post);
-              Navigator.of(context).pop();
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(
+                  fullscreenDialog: true,
+                  builder: (BuildContext context) => MyHomePage(
+                    title: "Home",
+                    user_id: user_id!,
+                  ),
+                ),
+              );
+
               int id;
               for (id = 1; id <= cleanSpotList.length; id++) {
                 if (spot == cleanSpotList[id]) {

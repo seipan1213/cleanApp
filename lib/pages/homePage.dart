@@ -33,7 +33,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     List<Widget> pages = [
       PostInfo(),
-      UserInfo(),
+      UserInfo(user_id: user_id),
       CleaningSettingForms(user_id: user_id)
     ];
     void onTapItem(int index) {
@@ -54,7 +54,7 @@ class _MyHomePageState extends State<MyHomePage> {
         body: pages[selectIndex],
         floatingActionButton: FloatingActionButton(
           onPressed: () async {
-            Navigator.of(context).push(
+            await Navigator.of(context).pushReplacement(
               MaterialPageRoute(
                 fullscreenDialog: true,
                 builder: (BuildContext context) => PostPage(
