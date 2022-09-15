@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rakuten_demo/services/apiService.dart';
+import 'package:rakuten_demo/services/notifications_utils.dart';
 
 class PostPage extends StatelessWidget {
   PostPage({super.key, required this.title, required this.user_id});
@@ -36,25 +37,31 @@ class PostForm extends StatefulWidget {
 }
 
 class _PostFormState extends State<PostForm> {
-  final List<String> cleanSpotList = <String>['風呂', 'リビング', 'トイレ'];
+  final Map<int, String?> cleanSpotList = <int, String?>{
+    1: '風呂',
+    2: 'リビング',
+    3: 'トイレ',
+  };
   final List<Widget> intensity = <Widget>[
     Text('ちょっと頑張った'),
     Text('普通に頑張った'),
     Text('すごく頑張った！'),
   ];
 
-  String spot = "";
+  String? spot = "";
   List<bool> _selectedintensityList = <bool>[true, false, false];
   int selectedIntensity = 0;
   bool _is_share = false;
   String comment = '';
   String? user_id;
+  final list = <String>[];
 
   @override
   void initState() {
     super.initState();
-    spot = cleanSpotList.first;
+    spot = cleanSpotList[1];
     user_id = widget.user_id;
+    cleanSpotList.forEach((k, v) => list.add(v!));
   }
 
   Widget DropdownButtonCleanSpot() {
@@ -72,7 +79,7 @@ class _PostFormState extends State<PostForm> {
           spot = value!;
         });
       },
-      items: cleanSpotList.map<DropdownMenuItem<String>>((String value) {
+      items: list.map<DropdownMenuItem<String>>((String value) {
         return DropdownMenuItem<String>(
           value: value,
           child: Text(value),
@@ -143,6 +150,21 @@ class _PostFormState extends State<PostForm> {
               );
               await apiService.addPost(post);
               Navigator.of(context).pop();
+              int id;
+              for (id = 1; id <= cleanSpotList.length; id++) {
+                if (spot == cleanSpotList[id]) {
+                  break;
+                }
+              }
+              List<CleaningSetting> cleaningSettings =
+                  await apiService.getCleaningSettings(user_id!);
+
+              NotificationsUtils.cancelNotificationsSchedule(id);
+              NotificationsUtils.scheduleNotifications(
+                id,
+                DateTime.now().add(Duration(
+                    seconds: cleaningSettings[id - 1].remind_interval! + 5)),
+              );
             },
             child: const Text(
               '投稿',
