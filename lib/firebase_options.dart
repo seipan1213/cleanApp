@@ -3,6 +3,7 @@
 import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
 import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, kIsWeb, TargetPlatform;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 /// Default [FirebaseOptions] for use with your Firebase apps.
 ///
@@ -43,8 +44,8 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyARj93_XtVsxEsKQ6UXo0E4lMYVfLwwpkM',
+  static FirebaseOptions web = FirebaseOptions(
+    apiKey: dotenv.get('WEB_API_KEY'),
     appId: '1:1045954068872:web:99844d492f22f8b7f8ba3d',
     messagingSenderId: '1045954068872',
     projectId: 'cleaning-app-15754',
@@ -53,16 +54,16 @@ class DefaultFirebaseOptions {
     measurementId: 'G-X71BDXJ396',
   );
 
-  static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyA-m3fS1gxZ-7Sb4qXBmef_q3zXxYxEtmA',
+  static FirebaseOptions android = FirebaseOptions(
+    apiKey: dotenv.get('ANDROID_API_KEY'),
     appId: '1:1045954068872:android:f6290192c13dc21df8ba3d',
     messagingSenderId: '1045954068872',
     projectId: 'cleaning-app-15754',
     storageBucket: 'cleaning-app-15754.appspot.com',
   );
 
-  static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyCPg_uXQTz3h-ReRwLafwzc1ARwVxl6RyE',
+  static FirebaseOptions ios = FirebaseOptions(
+    apiKey: dotenv.get('IOS_API_KEY'),
     appId: '1:1045954068872:ios:aae667a3ee1e1414f8ba3d',
     messagingSenderId: '1045954068872',
     projectId: 'cleaning-app-15754',
@@ -72,8 +73,8 @@ class DefaultFirebaseOptions {
     iosBundleId: 'com.example.myapp',
   );
 
-  static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyCPg_uXQTz3h-ReRwLafwzc1ARwVxl6RyE',
+  static FirebaseOptions macos = FirebaseOptions(
+    apiKey: dotenv.get('MACOS_API_KEY'),
     appId: '1:1045954068872:ios:aae667a3ee1e1414f8ba3d',
     messagingSenderId: '1045954068872',
     projectId: 'cleaning-app-15754',

@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:rakuten_demo/main.dart';
 import 'package:rakuten_demo/services/apiService.dart';
