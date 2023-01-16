@@ -1,6 +1,12 @@
-# rakuten_demo
+# cleanApp
+https://user-images.githubusercontent.com/38822155/212715641-76e54e61-3484-4534-95ee-ae2682ad582c.mp4
 
-A new Flutter project.
+## 掃除共有アプリ
+- 機能
+  - 掃除リマインド機能
+  - 掃除共有機能
+  - 掃除記録機能
+
 
 ## Getting Started
 
